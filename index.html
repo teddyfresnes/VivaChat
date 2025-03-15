@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HappyChat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-title">HappyChat</div>
+  </header>
+  <div class="container">
+    <aside>
+      <div class="sidebar-content">
+        <h2>Connexion</h2>
+        <div>
+          <button id="createOffer">Créer une Offre</button>
+          <textarea id="offerInput" placeholder="Offre"></textarea>
+          <button id="acceptOffer">Accepter Offre</button>
+        </div>
+        <div>
+          <button id="createAnswer">Créer une Réponse</button>
+          <textarea id="answerInput" placeholder="Réponse"></textarea>
+          <button id="acceptAnswer">Accepter Réponse</button>
+        </div>
+      </div>
+    </aside>
+    <main>
+      <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <div class="input-zone">
+          <input type="text" id="messageBox" placeholder="Tape ton message">
+          <button id="sendBtn">Envoyer</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
