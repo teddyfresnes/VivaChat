@@ -33,35 +33,41 @@ header {
 }
 
 aside {
-  width: 250px;
+  width: 300px;
   background: #ffffff;
   border-right: 1px solid #ddd;
   padding: 20px;
   overflow-y: auto;
 }
 
-.sidebar-content h2 {
-  margin-bottom: 15px;
-  font-size: 1.2rem;
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.sidebar-content button {
+.step h2 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.step button {
   margin: 5px 0;
-  padding: 8px 12px;
+  padding: 8px;
   width: 100%;
   cursor: pointer;
   border: none;
   background: #333;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-.sidebar-content textarea {
+.step textarea {
   width: 100%;
-  height: 60px;
+  height: 80px;
   margin: 5px 0;
   resize: none;
-  padding: 6px;
+  padding: 8px;
   border: 1px solid #ccc;
   font-size: 0.9rem;
 }

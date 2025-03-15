@@ -1,91 +1,77 @@
-let localConnection
-let remoteConnection
+let pc
 let dataChannel
-let remoteChannel
-
 let messages = document.getElementById('messages')
 let sendBtn = document.getElementById('sendBtn')
 let messageBox = document.getElementById('messageBox')
-let createOfferBtn = document.getElementById('createOffer')
-let acceptOfferBtn = document.getElementById('acceptOffer')
-let createAnswerBtn = document.getElementById('createAnswer')
-let acceptAnswerBtn = document.getElementById('acceptAnswer')
-let offerInput = document.getElementById('offerInput')
-let answerInput = document.getElementById('answerInput')
+let createLinkBtn = document.getElementById('createLink')
+let linkOutput = document.getElementById('linkOutput')
+let linkInput = document.getElementById('linkInput')
+let openLinkBtn = document.getElementById('openLink')
+let configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
 
-let configuration = { iceServers: [{ urls: 'stun:stun1.l.google.com:19302' }] }
+init()
 
-createOfferBtn.onclick = () => {
-  localConnection = new RTCPeerConnection(configuration)
-  dataChannel = localConnection.createDataChannel('chatChannel')
-  dataChannel.onopen = () => {}
-  dataChannel.onmessage = e => addMessage('Lui: ' + e.data)
-  localConnection.onicecandidate = e => {
-    if (e.candidate) return
-    offerInput.value = JSON.stringify(localConnection.localDescription)
+function init() {
+  if (location.hash) {
+    let data = decode(location.hash.substring(1))
+    if (data.type === 'offer') {
+      createPeer()
+      pc.setRemoteDescription(new RTCSessionDescription(data.desc))
+        .then(() => pc.createAnswer())
+        .then(a => pc.setLocalDescription(a))
+        .then(() => {
+          let answerDesc = { type: 'answer', desc: pc.localDescription }
+          location.hash = '#' + encode(answerDesc)
+        })
+    } else if (data.type === 'answer') {
+      if (pc) {
+        pc.setRemoteDescription(new RTCSessionDescription(data.desc))
+      } else {
+        createPeer()
+        pc.setRemoteDescription(new RTCSessionDescription(data.desc))
+      }
+    }
   }
-  localConnection.createOffer().then(o => {
-    localConnection.setLocalDescription(o)
-  })
 }
 
-acceptOfferBtn.onclick = () => {
-  remoteConnection = new RTCPeerConnection(configuration)
-  remoteConnection.ondatachannel = e => {
-    remoteChannel = e.channel
-    remoteChannel.onmessage = ev => addMessage('Lui: ' + ev.data)
-    remoteChannel.onopen = () => {}
-  }
-  remoteConnection.onicecandidate = e => {
-    if (e.candidate) return
-    answerInput.value = JSON.stringify(remoteConnection.localDescription)
-  }
-  let offer = JSON.parse(offerInput.value)
-  remoteConnection.setRemoteDescription(offer).then(() => {
-    remoteConnection.createAnswer().then(a => {
-      remoteConnection.setLocalDescription(a)
+createLinkBtn.onclick = () => {
+  createPeer()
+  pc.createOffer().then(o => {
+    pc.setLocalDescription(o).then(() => {
+      let offerDesc = { type: 'offer', desc: pc.localDescription }
+      let url = location.origin + location.pathname + '#' + encode(offerDesc)
+      linkOutput.value = url
     })
   })
 }
 
-createAnswerBtn.onclick = () => {
-  localConnection = new RTCPeerConnection(configuration)
-  localConnection.ondatachannel = e => {
-    remoteChannel = e.channel
-    remoteChannel.onmessage = ev => addMessage('Lui: ' + ev.data)
-    remoteChannel.onopen = () => {}
-  }
-  localConnection.onicecandidate = e => {
-    if (e.candidate) return
-    answerInput.value = JSON.stringify(localConnection.localDescription)
-  }
-  let offer = JSON.parse(offerInput.value)
-  localConnection.setRemoteDescription(offer).then(() => {
-    localConnection.createAnswer().then(a => {
-      localConnection.setLocalDescription(a)
-    })
-  })
-}
-
-acceptAnswerBtn.onclick = () => {
-  let answer = JSON.parse(answerInput.value)
-  if (remoteConnection) {
-    remoteConnection.setRemoteDescription(answer)
-  } else {
-    localConnection.setRemoteDescription(answer)
-  }
+openLinkBtn.onclick = () => {
+  location.href = linkInput.value
 }
 
 sendBtn.onclick = () => {
   let text = messageBox.value
   if (dataChannel && dataChannel.readyState === 'open') {
     dataChannel.send(text)
+    addMessage('Toi: ' + text)
   }
-  if (remoteChannel && remoteChannel.readyState === 'open') {
-    remoteChannel.send(text)
-  }
-  addMessage('Toi: ' + text)
   messageBox.value = ''
+}
+
+function createPeer() {
+  pc = new RTCPeerConnection(configuration)
+  pc.ondatachannel = e => {
+    dataChannel = e.channel
+    dataChannel.onmessage = ev => addMessage('Lui: ' + ev.data)
+  }
+  pc.onicecandidate = e => {
+    if (!e.candidate && pc.localDescription) {
+      let d = { type: pc.localDescription.type, desc: pc.localDescription }
+      location.hash = '#' + encode(d)
+    }
+  }
+  dataChannel = pc.createDataChannel('chat')
+  dataChannel.onmessage = ev => addMessage('Lui: ' + ev.data)
 }
 
 function addMessage(msg) {
@@ -94,4 +80,12 @@ function addMessage(msg) {
   div.textContent = msg
   messages.appendChild(div)
   messages.scrollTop = messages.scrollHeight
+}
+
+function encode(obj) {
+  return btoa(JSON.stringify(obj))
+}
+
+function decode(str) {
+  return JSON.parse(atob(str))
 }

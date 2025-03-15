@@ -2,26 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>VivaChat</title>
+  <title>HappyChat</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <div class="header-title">VivaChat</div>
+    <div class="header-title">HappyChat</div>
   </header>
   <div class="container">
     <aside>
       <div class="sidebar-content">
-        <h2>Connexion</h2>
-        <div>
-          <button id="createOffer">Créer une Offre</button>
-          <textarea id="offerInput" placeholder="Offre"></textarea>
-          <button id="acceptOffer">Accepter Offre</button>
+        <div class="step" id="step1">
+          <h2>Étape 1</h2>
+          <button id="createLink">Créer un Lien</button>
+          <textarea id="linkOutput" placeholder="Lien à envoyer"></textarea>
         </div>
-        <div>
-          <button id="createAnswer">Créer une Réponse</button>
-          <textarea id="answerInput" placeholder="Réponse"></textarea>
-          <button id="acceptAnswer">Accepter Réponse</button>
+        <div class="step" id="step2">
+          <h2>Étape 2</h2>
+          <textarea id="linkInput" placeholder="Lien reçu"></textarea>
+          <button id="openLink">Ouvrir ce Lien</button>
         </div>
       </div>
     </aside>
@@ -29,7 +28,7 @@
       <div class="chat-container">
         <div class="messages" id="messages"></div>
         <div class="input-zone">
-          <input type="text" id="messageBox" placeholder="Tape ton message">
+          <input type="text" id="messageBox" placeholder="Message">
           <button id="sendBtn">Envoyer</button>
         </div>
       </div>
