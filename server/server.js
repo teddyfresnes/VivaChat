@@ -13,7 +13,14 @@ let users = {}
 
 io.on('connection', socket => {
   socket.on('setUsername', username => {
-    users[socket.id] = { username, id: socket.id }
+    if (!users[socket.id]) users[socket.id] = { id: socket.id }
+    users[socket.id].username = username
+    io.emit('onlineUsers', Object.values(users))
+  })
+
+  socket.on('setAvatar', avatar => {
+    if (!users[socket.id]) users[socket.id] = { id: socket.id }
+    users[socket.id].avatar = avatar
     io.emit('onlineUsers', Object.values(users))
   })
 
@@ -32,6 +39,4 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(3000, () => {
-  console.log('Server listening on port 3000')
-})
+server.listen(22453, () => {})

@@ -23,12 +23,11 @@
       <ul id="onlineUsers"></ul>
       <div class="sidebar-footer">
         <div class="user-info">
-          <div class="footer-avatar"><i class="fa fa-user"></i></div>
+          <div class="footer-avatar"></div>
           <span id="currentUsername">Stranger</span>
         </div>
-        <i id="editUsername" class="fa fa-pencil"></i>
-        <i id="flushProfile" class="fa fa-rotate" style="margin-left:10px; cursor:pointer;"></i>
-        <i id="clearConvos" class="fa fa-trash" style="margin-left:10px; cursor:pointer;"></i>
+        <i id="flushProfile" class="fa fa-rotate"></i>
+        <i id="clearConvos" class="fa fa-trash"></i>
       </div>
     </aside>
     <div class="main">
@@ -41,7 +40,60 @@
       </div>
     </div>
   </div>
+
+  <div class="main-menu" id="mainMenu">
+    <div class="main-menu-content">
+      <div class="main-avatar-preview" id="mainAvatarPreview"></div>
+      <div class="menu-field">
+        <label for="menuUsername">Pseudo</label>
+        <input type="text" id="menuUsername"/>
+      </div>
+      <button id="customizeAvatarBtn">Personnaliser mon avatar</button>
+    </div>
+  </div>
+
+  <div class="avatar-menu" id="avatarMenu">
+    <div class="avatar-menu-content">
+      <div class="editor-field">
+        <label>Forme du visage</label>
+        <select id="faceShape">
+          <option value="round">Rond</option>
+          <option value="oval">Ovale</option>
+        </select>
+      </div>
+      <div class="editor-field">
+        <label>Type de cheveux</label>
+        <select id="hairType">
+          <option value="short">Court</option>
+          <option value="long">Long</option>
+          <option value="mohawk">Mohawk</option>
+        </select>
+      </div>
+      <div class="editor-field">
+        <label>Type des yeux</label>
+        <select id="eyeType">
+          <option value="normal">Normaux</option>
+          <option value="happy">Heureux</option>
+          <option value="wink">Clin d'oeil</option>
+        </select>
+      </div>
+      <div class="editor-field">
+        <label>Couleur de fond</label>
+        <div class="color-palette" data-target="backgroundColor"></div>
+      </div>
+      <div class="editor-field">
+        <label>Couleur des cheveux</label>
+        <div class="color-palette" data-target="hairColor"></div>
+      </div>
+      <div class="editor-field">
+        <label>Couleur des yeux</label>
+        <div class="color-palette" data-target="eyeColor"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
   <script src="app.js"></script>
+  <script src="userMenu.js"></script>
 </body>
 </html>

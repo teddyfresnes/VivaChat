@@ -1,9 +1,11 @@
-const socket = io('http://localhost:3000')
+const socket = io('http://176.165.38.138:22453')
 
 let username = loadData('username') || randomUsername()
+let avatar = loadData('avatar') || randomAvatar()
 let currentReceiver = null
 let currentUsers = []
 let usernameMap = {}
+let avatarMap = {}
 let conversations = loadData('conversations') || {}
 let unreadCounts = loadData('unreadCounts') || {}
 let canEdit = true
@@ -13,20 +15,28 @@ const onlineUsersList = document.getElementById('onlineUsers')
 const messagesDiv = document.getElementById('messages')
 const messageBox = document.getElementById('messageBox')
 const sendBtn = document.getElementById('sendBtn')
-const editUsernameIcon = document.getElementById('editUsername')
-let currentUsernameSpan = document.getElementById('currentUsername')
 const flushProfileIcon = document.getElementById('flushProfile')
 const clearConvosIcon = document.getElementById('clearConvos')
+const currentUsernameSpan = document.getElementById('currentUsername')
+const footerAvatar = document.querySelector('.footer-avatar')
+const mainMenu = document.getElementById('mainMenu')
+avatarMenu = document.getElementById('avatarMenu')
 
+function updateFooterAvatar() {
+  footerAvatar.innerHTML = generateAvatarSVG(avatar, 30)
+}
+
+updateFooterAvatar()
 currentUsernameSpan.textContent = username
 disableChatInput(true)
-
 socket.emit('setUsername', username)
+socket.emit('setAvatar', avatar)
 
 socket.on('onlineUsers', users => {
   currentUsers = users
   users.forEach(u => {
     usernameMap[u.id] = u.username
+    avatarMap[u.id] = u.avatar
   })
   if (currentReceiver && !users.find(u => u.id === currentReceiver)) {
     const lastMsg = conversations[currentReceiver]?.[conversations[currentReceiver].length - 1]
@@ -47,19 +57,14 @@ socket.on('receiveMessage', data => {
   saveData()
 })
 
-currentUsernameSpan.onclick = () => {
-  if (canEdit) triggerEditUsername()
-}
-editUsernameIcon.onclick = () => {
-  if (canEdit) triggerEditUsername()
-}
-
 flushProfileIcon.onclick = () => {
   username = randomUsername()
+  avatar = randomAvatar()
   socket.emit('setUsername', username)
+  socket.emit('setAvatar', avatar)
   currentUsernameSpan.textContent = username
   canEdit = false
-  if (document.getElementById('editUsername')) document.getElementById('editUsername').remove()
+  updateFooterAvatar()
   saveData()
 }
 
@@ -71,41 +76,6 @@ clearConvosIcon.onclick = () => {
   disableChatInput(true)
   updateLists()
   saveData()
-}
-
-function triggerEditUsername() {
-  const input = document.createElement('input')
-  input.type = 'text'
-  input.value = currentUsernameSpan.textContent
-  input.className = 'username-input'
-  currentUsernameSpan.replaceWith(input)
-  input.focus()
-  input.addEventListener('keypress', e => {
-    if (e.key === 'Enter') updateUsername(input)
-  })
-  input.addEventListener('blur', () => updateUsername(input))
-}
-
-function updateUsername(input) {
-  const oldUsername = currentUsernameSpan.textContent
-  let newUsername = input.value.trim()
-  if (newUsername && newUsername !== oldUsername) {
-    username = newUsername
-    socket.emit('setUsername', username)
-    canEdit = false
-    if (document.getElementById('editUsername')) {
-      document.getElementById('editUsername').remove()
-    }
-    saveData()
-  } else {
-    newUsername = oldUsername
-  }
-  const span = document.createElement('span')
-  span.id = 'currentUsername'
-  span.textContent = newUsername
-  span.style.fontWeight = 'bold'
-  input.replaceWith(span)
-  currentUsernameSpan = span
 }
 
 function disableChatInput(disabled) {
@@ -165,7 +135,7 @@ function renderConversation(partnerId) {
   messagesDiv.appendChild(infoDiv)
   let prevSender = null
   let block
-  conversations[partnerId]?.forEach((msg, i) => {
+  conversations[partnerId]?.forEach(msg => {
     if (msg.sender === 'system') {
       const sys = document.createElement('div')
       sys.className = 'system-message'
@@ -180,9 +150,13 @@ function renderConversation(partnerId) {
       block.className = 'message-block ' + (msg.sender === 'me' ? 'msg-me' : 'msg-other')
       const header = document.createElement('div')
       header.className = 'message-header'
-      const avatar = document.createElement('div')
-      avatar.className = 'message-avatar'
-      avatar.innerHTML = '<i class="fa fa-user"></i>'
+      const avatarDiv = document.createElement('div')
+      avatarDiv.className = 'message-avatar'
+      if (msg.sender === 'me') {
+        avatarDiv.innerHTML = generateAvatarSVG(avatar, 55)
+      } else {
+        avatarDiv.innerHTML = generateAvatarSVG(avatarMap[partnerId], 55)
+      }
       const meta = document.createElement('div')
       meta.className = 'message-meta'
       const uname = document.createElement('span')
@@ -193,7 +167,7 @@ function renderConversation(partnerId) {
       timeSpan.textContent = formattedTime
       meta.appendChild(uname)
       meta.appendChild(timeSpan)
-      header.appendChild(avatar)
+      header.appendChild(avatarDiv)
       header.appendChild(meta)
       block.appendChild(header)
       const bubble = document.createElement('div')
@@ -257,7 +231,7 @@ function createListItem(id, container, isPinned) {
   }
   li.innerHTML = `
     <div class="user-item">
-      <div class="user-avatar"><i class="fa fa-user"></i></div>
+      <div class="user-avatar">${generateAvatarSVG(avatarMap[id], 30)}</div>
       <div class="user-info-box">
         <div class="user-name">${name}</div>
         ${isPinned ? statusHTML : ''}
@@ -291,7 +265,7 @@ function createListItem(id, container, isPinned) {
   })
   li.addEventListener('mouseup', () => clearTimeout(li._timeout))
   li.addEventListener('mouseleave', () => clearTimeout(li._timeout))
-  li.addEventListener('click', e => {
+  li.addEventListener('click', () => {
     if (!li._timeout) return
     clearTimeout(li._timeout)
     li._timeout = null
@@ -304,8 +278,46 @@ function randomUsername() {
   return 'Stranger' + Math.floor(1000 + Math.random() * 9000)
 }
 
+function randomAvatar() {
+  return {
+    backgroundColor: '#'+(Math.floor(Math.random()*16777215).toString(16)).padStart(6, '0'),
+    faceShape: 'round',
+    eyeType: 'normal',
+    eyeColor: '#000000',
+    hairType: 'short',
+    hairColor: '#ffffff'
+  }
+}
+
+function generateAvatarSVG(conf, size) {
+  const bg = conf ? conf.backgroundColor : '#7289da'
+  const face = conf ? conf.faceShape : 'round'
+  const eye = conf ? conf.eyeType : 'normal'
+  const eyeC = conf ? conf.eyeColor : '#000000'
+  const hair = conf ? conf.hairType : 'short'
+  const hairC = conf ? conf.hairColor : '#ffffff'
+  const facePath = face === 'oval' ? `<ellipse cx="50" cy="50" rx="30" ry="40" fill="white"/>` : `<circle cx="50" cy="50" r="30" fill="white"/>`
+  let eyePath = ''
+  if (eye === 'normal') eyePath = `<circle cx="40" cy="45" r="3" fill="${eyeC}"/><circle cx="60" cy="45" r="3" fill="${eyeC}"/>`
+  if (eye === 'happy') eyePath = `<path d="M37,45 Q40,42 43,45" stroke="${eyeC}" stroke-width="2" fill="none"/><path d="M57,45 Q60,42 63,45" stroke="${eyeC}" stroke-width="2" fill="none"/>`
+  if (eye === 'wink') eyePath = `<circle cx="40" cy="45" r="3" fill="${eyeC}"/><path d="M57,45 Q60,42 63,45" stroke="${eyeC}" stroke-width="2" fill="none"/>`
+  let hairPath = ''
+  if (hair === 'short') hairPath = `<rect x="20" y="20" width="60" height="15" fill="${hairC}" rx="8" ry="8"/>`
+  if (hair === 'long') hairPath = `<rect x="20" y="20" width="60" height="30" fill="${hairC}" rx="10" ry="10"/>`
+  if (hair === 'mohawk') hairPath = `<rect x="45" y="10" width="10" height="25" fill="${hairC}" rx="4" ry="4"/>`
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+      <rect width="100" height="100" fill="${bg}"/>
+      ${hairPath}
+      ${facePath}
+      ${eyePath}
+    </svg>
+  `
+}
+
 function saveData() {
   localStorage.setItem('username', username)
+  localStorage.setItem('avatar', JSON.stringify(avatar))
   localStorage.setItem('conversations', JSON.stringify(conversations))
   localStorage.setItem('unreadCounts', JSON.stringify(unreadCounts))
 }
@@ -313,7 +325,7 @@ function saveData() {
 function loadData(key) {
   const d = localStorage.getItem(key)
   if (d) {
-    if (key === 'conversations' || key === 'unreadCounts') {
+    if (key === 'conversations' || key === 'unreadCounts' || key === 'avatar') {
       return JSON.parse(d)
     }
     return d

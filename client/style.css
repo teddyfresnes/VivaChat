@@ -132,6 +132,7 @@ html,body {
   color: #fff;
   margin-right: 10px;
   font-size: 0.9rem;
+  overflow: hidden;
 }
 
 .user-info-box {
@@ -189,8 +190,8 @@ html,body {
 .sidebar-footer .user-info {
   display: flex;
   align-items: center;
-  cursor: pointer;
   flex: 1;
+  cursor: pointer;
 }
 
 .footer-avatar {
@@ -205,37 +206,7 @@ html,body {
   color: #fff;
   margin-right: 10px;
   font-size: 0.9rem;
-}
-
-.sidebar-footer span,
-.sidebar-footer .username-input {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: #dcddde;
-  background: none;
-  border: none;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-#currentUsername {
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.sidebar-footer #editUsername,
-.sidebar-footer #flushProfile,
-.sidebar-footer #clearConvos {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-.sidebar-footer .username-input:focus {
-  outline: none;
-  border: none;
+  overflow: hidden;
 }
 
 .conversation-info {
@@ -317,6 +288,7 @@ html,body {
   color: #fff;
   margin-right: 10px;
   font-size: 1.3rem;
+  overflow: hidden;
 }
 
 .message-bubble {
@@ -383,4 +355,117 @@ html,body {
 
 .fade-in {
   animation: fadeIn 0.15s ease;
+}
+
+.main-menu {
+  position: absolute;
+  bottom: 70px;
+  left: 20px;
+  width: 240px;
+  background: #2f3136;
+  border: 1px solid #444;
+  border-radius: 6px;
+  display: none;
+  z-index: 999;
+  padding: 10px;
+}
+
+.main-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-avatar-preview {
+  width: 100%;
+  height: 100px;
+  background: #7289da;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.main-avatar-preview svg {
+  width: 80px;
+  height: 80px;
+}
+
+.menu-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-field label {
+  font-size: 0.85rem;
+}
+
+.menu-field input {
+  background: #40444b;
+  color: #ddd;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+#customizeAvatarBtn {
+  background-color: #7289da;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.avatar-menu {
+  position: absolute;
+  bottom: 70px;
+  left: 280px;
+  width: 240px;
+  background: #2f3136;
+  border: 1px solid #444;
+  border-radius: 6px;
+  display: none;
+  z-index: 999;
+  padding: 10px;
+}
+
+.avatar-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.editor-field label {
+  font-size: 0.85rem;
+}
+
+.editor-field select {
+  background: #40444b;
+  color: #ddd;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
 }
