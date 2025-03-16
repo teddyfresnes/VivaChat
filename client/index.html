@@ -40,7 +40,6 @@
       </div>
     </div>
   </div>
-
   <div class="main-menu" id="mainMenu">
     <div class="main-menu-content">
       <div class="main-avatar-preview" id="mainAvatarPreview"></div>
@@ -51,35 +50,47 @@
       <button id="customizeAvatarBtn">Personnaliser mon avatar</button>
     </div>
   </div>
-
   <div class="avatar-menu" id="avatarMenu">
     <div class="avatar-menu-content">
       <div class="editor-field">
         <label>Forme du visage</label>
-        <select id="faceShape">
-          <option value="round">Rond</option>
-          <option value="oval">Ovale</option>
-        </select>
+        <div class="arrow-selector" id="faceShapeSelector">
+          <button class="arrow-left" id="faceShapeLeft">&lt;</button>
+          <span id="faceShapeValue">Rond</span>
+          <button class="arrow-right" id="faceShapeRight">&gt;</button>
+        </div>
       </div>
       <div class="editor-field">
         <label>Type de cheveux</label>
-        <select id="hairType">
-          <option value="short">Court</option>
-          <option value="long">Long</option>
-          <option value="mohawk">Mohawk</option>
-        </select>
+        <div class="arrow-selector" id="hairTypeSelector">
+          <button class="arrow-left" id="hairTypeLeft">&lt;</button>
+          <span id="hairTypeValue">Mickey</span>
+          <button class="arrow-right" id="hairTypeRight">&gt;</button>
+        </div>
       </div>
       <div class="editor-field">
         <label>Type des yeux</label>
-        <select id="eyeType">
-          <option value="normal">Normaux</option>
-          <option value="happy">Heureux</option>
-          <option value="wink">Clin d'oeil</option>
-        </select>
+        <div class="arrow-selector" id="eyeTypeSelector">
+          <button class="arrow-left" id="eyeTypeLeft">&lt;</button>
+          <span id="eyeTypeValue">Heureux</span>
+          <button class="arrow-right" id="eyeTypeRight">&gt;</button>
+        </div>
       </div>
       <div class="editor-field">
-        <label>Couleur de fond</label>
-        <div class="color-palette" data-target="backgroundColor"></div>
+        <label>Bouche</label>
+        <div class="arrow-selector" id="mouthTypeSelector">
+          <button class="arrow-left" id="mouthTypeLeft">&lt;</button>
+          <span id="mouthTypeValue">Sourire</span>
+          <button class="arrow-right" id="mouthTypeRight">&gt;</button>
+        </div>
+      </div>
+      <div class="editor-field">
+        <label>Couleur de peau</label>
+        <div class="color-palette" data-target="skinColor"></div>
+      </div>
+      <div class="editor-field">
+        <label>Couleur du corps</label>
+        <div class="color-palette" data-target="bodyColor"></div>
       </div>
       <div class="editor-field">
         <label>Couleur des cheveux</label>
@@ -91,7 +102,6 @@
       </div>
     </div>
   </div>
-
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
   <script src="app.js"></script>
   <script src="userMenu.js"></script>
