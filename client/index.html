@@ -13,6 +13,10 @@
   </header>
   <div class="app-container">
     <aside class="sidebar">
+      <div class="pinned-header" style="display:none;">
+        <div class="title"></div>
+      </div>
+      <ul id="pinnedUsers" style="display:none;"></ul>
       <div class="sidebar-header">
         <div class="title">EN LIGNE</div>
       </div>
@@ -23,6 +27,8 @@
           <span id="currentUsername">Stranger</span>
         </div>
         <i id="editUsername" class="fa fa-pencil"></i>
+        <i id="flushProfile" class="fa fa-rotate" style="margin-left:10px; cursor:pointer;"></i>
+        <i id="clearConvos" class="fa fa-trash" style="margin-left:10px; cursor:pointer;"></i>
       </div>
     </aside>
     <div class="main">

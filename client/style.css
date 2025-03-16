@@ -1,5 +1,4 @@
-html,
-body {
+html,body {
   margin: 0;
   padding: 0;
   height: calc(100% - 60px);
@@ -7,6 +6,7 @@ body {
   background-color: #36393f;
   color: #dcddde;
 }
+
 .main-header {
   position: fixed;
   top: 0;
@@ -19,6 +19,7 @@ body {
   align-items: center;
   border-bottom: 2px solid rgb(43, 43, 43);
 }
+
 .logo {
   width: 230px;
   background-color: #2f3136;
@@ -29,28 +30,36 @@ body {
   font-size: 1.6rem;
   font-weight: bold;
 }
+
 .app-container {
   display: flex;
   margin-top: 60px;
   height: calc(100% + 60px);
 }
+
 .sidebar {
-  width: 230px;
-  min-width: 230px;
+  width: 270px;
+  min-width: 270px;
   background-color: #2f3136;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 0;
 }
+
+.sidebar-header {
+  padding: 0 20px;
+}
+
 .sidebar-header .title {
   text-align: center;
   font-size: 0.85rem;
   font-weight: bold;
   color: #b9bbbe;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   position: relative;
   padding: 0 10px;
 }
+
 .sidebar-header .title:before,
 .sidebar-header .title:after {
   content: "";
@@ -59,116 +68,90 @@ body {
   width: 30%;
   border-top: 1px solid #b9bbbe;
 }
+
 .sidebar-header .title:before {
   left: 0;
   margin-right: 10px;
 }
+
 .sidebar-header .title:after {
   right: 0;
   margin-left: 10px;
 }
+
+#pinnedUsers,
 #onlineUsers {
   list-style: none;
   padding: 0;
   margin: 0;
-  flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
 }
+
+#onlineUsers {
+  flex: 1;
+}
+
+#pinnedUsers li,
 #onlineUsers li {
   margin-bottom: 5px;
   cursor: pointer;
   position: relative;
+  display: flex;
+  justify-content: center;
 }
+
 .user-item {
+  width: 75%;
+  position: relative;
   display: flex;
   align-items: center;
   background-color: #2f3136;
   padding: 6px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
 .user-item:hover {
   background-color: #3a3f47;
-  transform: translateX(5px);
 }
+
+.user-item.selected {
+  background-color: #4f545c;
+}
+
 .user-avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   background-color: #7289da;
-  display: inline-block;
   text-align: center;
   line-height: 30px;
   color: #fff;
   margin-right: 10px;
   font-size: 0.9rem;
 }
-.user-name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #dcddde;
-}
-.sidebar-footer {
+
+.user-info-box {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 50px;
-  box-sizing: border-box;
-  padding: 0 15px;
-  margin-top: 15px;
-  border-top: 1px solid #777;
+  flex-direction: column;
 }
-.sidebar-footer .user-info {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  flex: 1;
+
+.user-status {
+  font-size: 0.7rem;
+  margin-top: 2px;
 }
-.footer-avatar {
-  width: 30px;
-  min-width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #7289da;
-  display: inline-block;
-  text-align: center;
-  line-height: 30px;
-  color: #fff;
-  margin-right: 10px;
-  font-size: 0.9rem;
+
+.online {
+  color: #2ecc71;
 }
-.sidebar-footer span,
-.sidebar-footer .username-input {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: #dcddde;
-  background: none;
-  border: none;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  width: 100%;
+
+.offline {
+  color: #aaa;
 }
-#currentUsername {
-  font-weight: bold;
-  cursor: pointer;
-}
-.sidebar-footer #editUsername {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-.sidebar-footer #editUsername:focus {
-  outline: none;
-  border: none;
-}
-.sidebar-footer .username-input:focus {
-  outline: none;
-  border: none;
-}
+
 .notif {
   position: absolute;
   right: 5px;
@@ -184,29 +167,110 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #dcddde;
+}
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 60px;
+  box-sizing: border-box;
+  padding: 15px 15px;
+  padding-top: 25px;
+  border-top: 1px solid #444;
+  gap: 10px;
+}
+
+.sidebar-footer .user-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex: 1;
+}
+
+.footer-avatar {
+  width: 0px;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #7289da;
+  display: inline-block;
+  text-align: center;
+  line-height: 30px;
+  color: #fff;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.sidebar-footer span,
+.sidebar-footer .username-input {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #dcddde;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#currentUsername {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sidebar-footer #editUsername,
+.sidebar-footer #flushProfile,
+.sidebar-footer #clearConvos {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.sidebar-footer .username-input:focus {
+  outline: none;
+  border: none;
+}
+
 .conversation-info {
   text-align: left;
   color: #aaa;
   font-style: italic;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
 .system-message {
-  text-align: center;
+  text-align: left;
   color: red;
   margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-x: auto;
 }
+
 .chat-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
 }
+
 .messages {
   flex: 1;
   overflow-y: auto;
@@ -215,27 +279,33 @@ body {
   flex-direction: column;
   justify-content: flex-end;
 }
+
 .message-block {
   margin-bottom: 10px;
 }
+
 .message-header {
   display: flex;
   align-items: flex-start;
   margin-bottom: -37px;
 }
+
 .message-meta {
   display: inline-flex;
   align-items: center;
   gap: 5px;
 }
+
 .message-username {
   font-size: 1rem;
   font-weight: bold;
 }
+
 .message-time {
   font-size: 0.7rem;
   color: #aaa;
 }
+
 .message-avatar {
   width: 55px;
   height: 55px;
@@ -248,6 +318,7 @@ body {
   margin-right: 10px;
   font-size: 1.3rem;
 }
+
 .message-bubble {
   float: left;
   clear: left;
@@ -264,12 +335,15 @@ body {
   overflow-wrap: break-word;
   white-space: pre-wrap;
 }
+
 .msg-other .message-bubble {
   background-color: #40444b;
 }
+
 .input-zone {
   display: flex;
 }
+
 .input-zone input {
   flex: 1;
   border: none;
@@ -279,9 +353,11 @@ body {
   border-radius: 4px 0 0 4px;
   font-size: 1rem;
 }
+
 .input-zone input:focus {
   outline: none;
 }
+
 .input-zone button {
   background-color: #7289da;
   border: none;
@@ -294,17 +370,17 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .input-zone button.disabled {
   background-color: #555;
   cursor: not-allowed;
 }
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from {opacity: 0; transform: translateY(5px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.fade-in {
+  animation: fadeIn 0.15s ease;
 }
