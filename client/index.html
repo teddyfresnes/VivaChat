@@ -1,115 +1,122 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="icon" type="image/x-icon" href="images/favicon.png">
   <title>VivaChat</title>
+  <audio id="notificationSound" src="notification.mp3" preload="auto"></audio>
 </head>
 <body>
-  <header class="main-header">
-    <div class="logo">VivaChat</div>
-  </header>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="pinned-header" style="display:none;">
-        <div class="title"></div>
-      </div>
-      <ul id="pinnedUsers" style="display:none;"></ul>
-      <div class="sidebar-header">
-        <div class="title">EN LIGNE</div>
-      </div>
-      <ul id="onlineUsers"></ul>
-      <div class="sidebar-footer">
-        <div class="user-info">
-          <div class="footer-avatar"></div>
-          <span id="currentUsername">Stranger</span>
-        </div>
-        <i id="flushProfile" class="fa fa-rotate"></i>
-        <i id="settingsIcon" class="fa fa-cog"></i>
-      </div>
-    </aside>
-    <div class="main">
-      <div class="chat-container">
-        <div class="messages" id="messages"></div>
-        <div class="input-zone">
-          <input type="text" id="messageBox"/>
-          <button id="sendBtn" disabled><i class="fa fa-paper-plane"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="main-menu" id="mainMenu">
-    <div class="main-menu-content">
-      <div class="main-avatar-preview" id="mainAvatarPreview"></div>
-      <button id="customizeAvatarBtn">Personnaliser mon avatar</button>
-      <div class="menu-field">
-        <label for="menuUsername">Pseudo</label>
-        <input type="text" id="menuUsername"/>
-      </div>
-    </div>
-  </div>
-  <div class="avatar-menu" id="avatarMenu">
-	<div class="avatar-menu-content">
-	  <div class="editor-field">
-		<label>Forme du visage</label>
-		<div class="arrow-selector" id="faceShapeSelector">
-		  <button class="arrow-left" id="faceShapeLeft">&lt;</button>
-		  <span id="faceShapeValue">Rond</span>
-		  <button class="arrow-right" id="faceShapeRight">&gt;</button>
+	<header class="main-header">
+		<div class="logo">VivaChat</div>
+	</header>
+	<div class="app-container">
+		<aside class="sidebar">
+			<div class="pinned-header" style="display:none;">
+				<div class="title"></div>
+			</div>
+			<ul id="pinnedUsers" style="display:none;"></ul>
+			<div class="sidebar-header">
+				<div class="title">EN LIGNE</div>
+			</div>
+			<div id="inviteContainer" style="display:none;">
+				<div class="invite-content">
+					<p>Personne d'autre ? Envoyez lien d'invitation à vos amis</p>
+					<button id="copyLinkBtn">Copier le lien</button>
+				</div>
+				<img src="images/nobody.png" alt="Invite" class="invite-img" />
+			</div>
+			<ul id="onlineUsers"></ul>
+			<div class="sidebar-footer">
+				<div class="user-info">
+					<div class="footer-avatar"></div>
+					<span id="currentUsername">Stranger</span>
+				</div>
+				<i id="audioToggle" class="fa fa-volume-up"></i>
+				<i id="settingsIcon" class="fa fa-cog"></i>
+			</div>
+		</aside>
+		<div class="main">
+			<div class="chat-container">
+				<div class="messages" id="messages"></div>
+				<div class="input-zone">
+					<input type="text" id="messageBox"/>
+					<button id="sendBtn" disabled><i class="fa fa-paper-plane"></i></button>
+				</div>
+			</div>
 		</div>
-	  </div>
-	  <div class="editor-field">
-		<label>Type de cheveux</label>
-		<div class="arrow-selector" id="hairTypeSelector">
-		  <button class="arrow-left" id="hairTypeLeft">&lt;</button>
-		  <span id="hairTypeValue">Mickey</span>
-		  <button class="arrow-right" id="hairTypeRight">&gt;</button>
-		</div>
-	  </div>
-	  <div class="editor-field">
-		<label>Type des yeux</label>
-		<div class="arrow-selector" id="eyeTypeSelector">
-		  <button class="arrow-left" id="eyeTypeLeft">&lt;</button>
-		  <span id="eyeTypeValue">Heureux</span>
-		  <button class="arrow-right" id="eyeTypeRight">&gt;</button>
-		</div>
-	  </div>
-	  <div class="editor-field">
-		<label>Bouche</label>
-		<div class="arrow-selector" id="mouthTypeSelector">
-		  <button class="arrow-left" id="mouthTypeLeft">&lt;</button>
-		  <span id="mouthTypeValue">Sourire</span>
-		  <button class="arrow-right" id="mouthTypeRight">&gt;</button>
-		</div>
-	  </div>
-	  <div class="editor-field">
-		<label>Couleur de peau</label>
-		<div class="color-palette" data-target="skinColor"></div>
-	  </div>
-	  <div class="editor-field">
-		<label>Couleur du corps</label>
-		<div class="color-palette" data-target="bodyColor"></div>
-	  </div>
-	  <div class="editor-field">
-		<label>Couleur des cheveux</label>
-		<div class="color-palette" data-target="hairColor"></div>
-	  </div>
-	  <div class="editor-field">
-		<label>Couleur des yeux</label>
-		<div class="color-palette" data-target="eyeColor"></div>
-	  </div>
 	</div>
-  </div>
-  
-  
-  <div id="settingsMenuContainer"></div>
-  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
-  <script src="avatarGenerator.js"></script>
-  <script src="app.js"></script>
-  <script src="userMenu.js"></script>
-  <script src="settingsMenu.js"></script>
+	<div class="main-menu" id="mainMenu">
+		<div class="main-menu-content">
+			<div class="main-avatar-preview" id="mainAvatarPreview"></div>
+			<button id="customizeAvatarBtn">Personnaliser mon avatar</button>
+			<div class="menu-field">
+				<label for="menuUsername">Pseudo</label>
+				<input type="text" id="menuUsername"/>
+			</div>
+		</div>
+	</div>
+	<div class="avatar-menu" id="avatarMenu">
+		<div class="avatar-menu-content">
+			<div class="editor-field">
+				<label>Forme du visage</label>
+				<div class="arrow-selector" id="faceShapeSelector">
+					<button class="arrow-left" id="faceShapeLeft">&lt;</button>
+					<span id="faceShapeValue">Rond</span>
+					<button class="arrow-right" id="faceShapeRight">&gt;</button>
+				</div>
+			</div>
+			<div class="editor-field">
+				<label>Type de cheveux</label>
+				<div class="arrow-selector" id="hairTypeSelector">
+					<button class="arrow-left" id="hairTypeLeft">&lt;</button>
+					<span id="hairTypeValue">Mickey</span>
+					<button class="arrow-right" id="hairTypeRight">&gt;</button>
+				</div>
+			</div>
+			<div class="editor-field">
+				<label>Type des yeux</label>
+				<div class="arrow-selector" id="eyeTypeSelector">
+					<button class="arrow-left" id="eyeTypeLeft">&lt;</button>
+					<span id="eyeTypeValue">Heureux</span>
+					<button class="arrow-right" id="eyeTypeRight">&gt;</button>
+				</div>
+			</div>
+			<div class="editor-field">
+				<label>Bouche</label>
+				<div class="arrow-selector" id="mouthTypeSelector">
+					<button class="arrow-left" id="mouthTypeLeft">&lt;</button>
+					<span id="mouthTypeValue">Sourire</span>
+					<button class="arrow-right" id="mouthTypeRight">&gt;</button>
+				</div>
+			</div>
+			<div class="editor-field">
+				<label>Couleur de peau</label>
+				<div class="color-palette" data-target="skinColor"></div>
+			</div>
+			<div class="editor-field">
+				<label>Couleur du corps</label>
+				<div class="color-palette" data-target="bodyColor"></div>
+			</div>
+			<div class="editor-field">
+				<label>Couleur des cheveux</label>
+				<div class="color-palette" data-target="hairColor"></div>
+			</div>
+			<div class="editor-field">
+				<label>Couleur des yeux</label>
+				<div class="color-palette" data-target="eyeColor"></div>
+			</div>
+		</div>
+	</div>
+	<div id="settingsMenuContainer"></div>
+	<audio id="notificationSound" src="notification.mp3"></audio>
+	<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+	<script src="avatarGenerator.js"></script>
+	<script src="app.js"></script>
+	<script src="userMenu.js"></script>
+	<script src="settingsMenu.js"></script>
 </body>
 </html>
