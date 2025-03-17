@@ -91,15 +91,24 @@ userInfo.addEventListener('click', e => {
   e.stopPropagation()
 })
 document.body.addEventListener('click', e => {
-  if (mainMenu.style.display === 'block' && !mainMenu.contains(e.target) && !avatarMenu.contains(e.target) && e.target !== userInfo) {
-    username = menuUsername.value.trim() || username
-    socket.emit('setUsername', username)
-    currentUsernameSpan.textContent = username
-    canEdit = false
-    saveData()
-    mainMenu.style.display = 'none'
-  }
-})
+	if (
+	  mainMenu.style.display === 'block' &&
+	  !mainMenu.contains(e.target) &&
+	  !avatarMenu.contains(e.target) &&
+	  e.target !== userInfo
+	) {
+	  let newUsername = menuUsername.value.trim() || username;
+	  if (newUsername.length > 16) {
+		newUsername = newUsername.substring(0, 16);
+	  }
+	  username = newUsername;
+	  socket.emit('setUsername', username);
+	  currentUsernameSpan.textContent = username;
+	  canEdit = false;
+	  saveData();
+	  mainMenu.style.display = 'none';
+	}
+});  
 customizeAvatarBtn.addEventListener('click', e => {
   [...colorPalettes].forEach(palette => createPaletteSwatches(palette))
   avatarMenu.style.display = 'block'

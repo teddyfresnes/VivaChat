@@ -45,6 +45,8 @@ html, body {
 	flex-direction: column;
 	padding: 20px 0;
   }
+
+
   
   .sidebar-header {
 	padding: 0 20px;
@@ -204,8 +206,19 @@ html, body {
 	text-overflow: ellipsis;
   }
   .sidebar-footer .user-info:hover {
-	background-color:#202227
+	background-color: #202227;
+	cursor: pointer;
   }
+  
+  .sidebar-footer #audioToggle, .sidebar-footer #settingsIcon {
+	transition: transform 0.3s ease-in-out;
+  }
+  
+  .sidebar-footer #audioToggle:hover, .sidebar-footer #settingsIcon:hover {
+	cursor: pointer;
+	transform: rotate(15deg);
+  }
+
   
   .footer-avatar {
 	width: 0px;
@@ -245,6 +258,7 @@ html, body {
 	text-align: left;
 	color: red;
 	margin: 5px 0;
+	margin-bottom: 10px;
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -455,8 +469,8 @@ html, body {
   
   .settings-menu {
 	position: absolute;
-	bottom: 70px;
-	left: 240px;
+	bottom: 80px;
+	left: 0px;
 	width: 250px;
 	background: #2f3136;
 	border: 2px solid #444;
