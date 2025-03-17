@@ -87,6 +87,7 @@ html, body {
 	overflow-x: hidden;
 	overflow-y: auto;
 	position: relative;
+	scrollbar-width: thin;
   }
   
   #onlineUsers {
@@ -173,6 +174,12 @@ html, body {
 	font-size: 1rem;
 	font-weight: 500;
 	color: #dcddde;
+
+	width: 120px;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden !important;
+	text-overflow: ellipsis;
   }
   
   .sidebar-footer {
@@ -192,6 +199,12 @@ html, body {
 	align-items: center;
 	flex: 1;
 	cursor: pointer;
+	padding: 7px;
+	border-radius: 5px;
+	text-overflow: ellipsis;
+  }
+  .sidebar-footer .user-info:hover {
+	background-color:#202227
   }
   
   .footer-avatar {
@@ -207,6 +220,14 @@ html, body {
 	margin-right: 10px;
 	font-size: 0.9rem;
 	overflow: hidden;
+  }
+
+  #currentUsername {
+	width: 120px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
   }
   
   .conversation-info {
