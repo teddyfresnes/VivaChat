@@ -1,4 +1,4 @@
-const socket = io('https://176.165.38.138:22453')
+const socket = io('http://176.165.38.138:22453')
 let username = loadData('username') || randomUsername()
 let avatar = loadData('avatar') || randomAvatar()
 let currentReceiver = null
