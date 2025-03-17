@@ -313,10 +313,9 @@ html,body {
 .main-menu {
   position: absolute;
   bottom: 70px;
-  left: 20px;
-  width: 240px;
+  width: 250px;
   background: #2f3136;
-  border: 1px solid #444;
+  border: 2px solid #444;
   border-radius: 6px;
   display: none;
   z-index: 999;
@@ -368,10 +367,10 @@ html,body {
 .avatar-menu {
   position: absolute;
   bottom: 70px;
-  left: 280px;
+  left: 270px;
   width: 240px;
   background: #2f3136;
-  border: 1px solid #444;
+  border: 2px solid #444;
   border-radius: 6px;
   display: none;
   z-index: 999;
