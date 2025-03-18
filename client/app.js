@@ -83,14 +83,14 @@ if (!isPrimary) {
   socket.on("connect_error", error => {
     onlineUsersList.innerHTML = "";
     inviteContainer.style.display = "block";
-    inviteContainer.innerHTML = '<div class="invite-content"><p style="color:red;">Le serveur est injoignable :(</p></div><img src="images/server.png" alt="Serveur injoignable" class="invite-img" />';
+    inviteContainer.innerHTML = '<div class="invite-content"><p style="color:red;">Le serveur est injoignable :(</p></div><img src="assets/images/server.png" alt="Serveur injoignable" class="invite-img" />';
   });
   socket.on("onlineUsers", users => {
     let storedProfileId = localStorage.getItem("profileId");
     if (storedProfileId && storedProfileId !== socket.id) {
       if (users.some(u => u.id === storedProfileId)) {
         inviteContainer.style.display = "block";
-        inviteContainer.innerHTML = '<div class="invite-content"><img src="wait.png" alt="Waiting"><p style="color:white;">Reconnexion, veuillez patienter quelques secondes...</p></div>';
+        inviteContainer.innerHTML = '<div class="invite-content"><p style="color:#0ec940;">Reconnexion, veuillez patienter quelques secondes...</p></div><img src="assets/images/wait.png" class="invite-img" alt="Waiting" />';
         socket.disconnect();
         setTimeout(() => {
           socket.connect();
@@ -339,7 +339,7 @@ if (!isPrimary) {
     });
     if (onlineCount === 0) {
       inviteContainer.style.display = "block";
-      inviteContainer.innerHTML = '<div class="invite-content"><p>Personne d\'autre ? Envoyez un lien d\'invitation à vos amis !</p><button id="copyLinkBtnNew">Copier le lien</button></div><img src="images/nobody.png" alt="Invite" class="invite-img" />';
+      inviteContainer.innerHTML = '<div class="invite-content"><p>Personne d\'autre ? Envoyez un lien d\'invitation à vos amis !</p><button id="copyLinkBtnNew">Copier le lien</button></div><img src="assets/images/nobody.png" alt="Invite" class="invite-img" />';
       let copyLinkBtnNew = document.getElementById("copyLinkBtnNew");
       copyLinkBtnNew.addEventListener("click", () => {
         const tempInput = document.createElement("input");
