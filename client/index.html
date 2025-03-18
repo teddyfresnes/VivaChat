@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-  <link rel="icon" type="image/x-icon" href="images/favicon.png">
+  <link rel="icon" type="image/x-icon" href="images/favicon2.png">
   <title>VivaChat/</title>
   <audio id="notificationSound" src="notification.mp3" preload="auto"></audio>
 </head>
@@ -53,10 +53,10 @@
     <div class="main-menu-content">
       <div class="main-avatar-preview" id="mainAvatarPreview"></div>
       <button id="customizeAvatarBtn">Personnaliser mon avatar</button>
-	  <hr>
+    <hr>
       <div class="menu-field">
         <label for="menuUsername">Pseudo</label>
-        <input type="text" maxlength="16"  id="menuUsername"/>
+        <input type="text" maxlength="16" id="menuUsername"/>
       </div>
       <div class="menu-field">
         <label for="menuIntro">Phrase d'introduction</label>
@@ -105,7 +105,6 @@
         <label>Couleur de peau</label>
         <div class="color-palette" data-target="skinColor"></div>
       </div>
-
       <div class="editor-field">
         <label>Couleur des cheveux</label>
         <div class="color-palette" data-target="hairColor"></div>
@@ -114,18 +113,18 @@
         <label>Couleur des yeux</label>
         <div class="color-palette" data-target="eyeColor"></div>
       </div>
-	  <div class="editor-field">
+    <div class="editor-field">
         <label>Couleur du corps</label>
         <div class="color-palette" data-target="bodyColor"></div>
       </div>
     </div>
   </div>
   <div id="settingsMenu" class="settings-menu">
-	<div class="settings-menu-content">
-		<button id="saveProfile">Sauvegarder Profil</button>
-		<button id="importProfile">Importer Profil</button>
-		<button id="deleteProfile">Supprimer Profil</button>
-	</div>
+  <div class="settings-menu-content">
+    <button id="saveProfile">Sauvegarder Profil</button>
+    <button id="importProfile">Importer Profil</button>
+    <button id="deleteProfile">Supprimer Profil</button>
+  </div>
   </div>
   <audio id="notificationSound" src="notification.mp3"></audio>
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>

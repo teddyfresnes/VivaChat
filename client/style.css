@@ -46,6 +46,7 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	padding: 20px 0;
+
   }
   .sidebar-header {
 	padding: 0 20px;
@@ -233,15 +234,7 @@ html, body {
 	color: #aaa;
 	margin-bottom: 10px;
   }
-  .system-message {
-	text-align: left;
-	color: red;
-	margin: 5px 0;
-	margin-bottom: 10px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-  }
+
   .typing-message {
 	text-align: left;
 	color: #aaa;
@@ -359,7 +352,7 @@ html, body {
   }
   .input-zone button.disabled {
 	background-color: #555;
-	cursor: not-allowed;
+	cursor:not-allowed;
   }
   @keyframes fadeIn {
 	from {
@@ -529,6 +522,8 @@ input[type="checkbox"] {
 	background-color: #2f3136;
 	border: 2px dashed #444;
 	margin: 0px 10px 0 10px;
+	overflow-y: auto;
+	scrollbar-width: thin;
   }
   #inviteContainer .invite-content {
 	margin-bottom: 10px;
