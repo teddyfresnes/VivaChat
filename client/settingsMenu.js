@@ -1,6 +1,5 @@
 const settingsIcon = document.getElementById('settingsIcon')
-const settingsMenuContainer = document.getElementById('settingsMenuContainer')
-settingsMenuContainer.innerHTML = '<div class="settings-menu" id="settingsMenu"><div class="settings-menu-content"><button id="saveProfile"><i class="fa fa-save"></i> Sauvegarder le profil</button><button id="importProfile"><i class="fa fa-upload"></i> Importer un profil</button><button id="deleteProfile"><i class="fa fa-rotate"></i> Effacer le profil</button></div></div>'
+
 const settingsMenu = document.getElementById('settingsMenu')
 settingsIcon.addEventListener('click', e => {
   if(settingsMenu.style.display === 'block'){

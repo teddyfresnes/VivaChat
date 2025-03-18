@@ -12,11 +12,15 @@ window.addEventListener("storage", e => {
 	if (isPrimary) localStorage.removeItem("primaryTab");
   });
   if (!isPrimary) {
-	document.body.innerHTML = '<div style="text-align:center;color:#fff;margin-top:50px;">Un autre onglet est déjà connecté. Fermez cet onglet.</div>';
+	document.body.innerHTML =
+	  '<div style="text-align:center;color:#fff;margin-top:50px;">Un autre onglet est déjà connecté. Fermez cet onglet.</div>';
   } else {
 	window.socket = io("http://176.165.38.138:22453");
 	window.username = loadData("username") || randomUsername();
 	window.avatar = loadData("avatar") || randomAvatar();
+	window.introPhrase = localStorage.getItem("introPhrase") || "";
+	window.typingOption =
+	  localStorage.getItem("typingOption") === "false" ? false : true;
 	window.currentReceiver = null;
 	window.currentUsers = [];
 	window.usernameMap = {};
@@ -47,12 +51,17 @@ window.addEventListener("storage", e => {
 	disableChatInput(true);
 	socket.emit("setUsername", window.username);
 	socket.emit("setAvatar", window.avatar);
+	socket.emit("setIntro", window.introPhrase);
 	socket.on("onlineUsers", users => {
 	  window.currentUsers = users;
 	  users.forEach(u => {
 		window.usernameMap[u.id] = u.username;
 		window.avatarMap[u.id] = u.avatar;
-		window.savedUsers[u.id] = { username: u.username, avatar: u.avatar };
+		window.savedUsers[u.id] = {
+		  username: u.username,
+		  avatar: u.avatar,
+		  intro: u.intro || ""
+		};
 	  });
 	  const convKeys = Object.keys(window.conversations);
 	  const groups = {};
@@ -70,11 +79,14 @@ window.addEventListener("storage", e => {
 		  if (key !== primaryKey) {
 			if (!window.conversations[primaryKey])
 			  window.conversations[primaryKey] = [];
-			window.conversations[primaryKey] = window.conversations[primaryKey].concat(window.conversations[key]);
+			window.conversations[primaryKey] = window.conversations[primaryKey].concat(
+			  window.conversations[key]
+			);
 			delete window.conversations[key];
 			delete window.savedUsers[key];
 			if (window.unreadCounts[key]) {
-			  window.unreadCounts[primaryKey] = (window.unreadCounts[primaryKey] || 0) + window.unreadCounts[key];
+			  window.unreadCounts[primaryKey] =
+				(window.unreadCounts[primaryKey] || 0) + window.unreadCounts[key];
 			  delete window.unreadCounts[key];
 			}
 			if (window.currentReceiver === key) {
@@ -83,12 +95,28 @@ window.addEventListener("storage", e => {
 		  }
 		});
 	  }
-	  if (window.currentReceiver && users.find(u => u.id === window.currentReceiver)) {
+	  if (
+		window.currentReceiver &&
+		users.find(u => u.id === window.currentReceiver)
+	  ) {
 		disableChatInput(false);
-	  } else if (window.currentReceiver && !users.find(u => u.id === window.currentReceiver)) {
-		const lastMsg = window.conversations[window.currentReceiver]?.[window.conversations[window.currentReceiver].length - 1];
-		const disconnectedText = (window.savedUsers[window.currentReceiver] ? window.savedUsers[window.currentReceiver].username : "Inconnu") + " s'est déconnecté(e).";
-		if (!lastMsg || lastMsg.sender !== "system" || lastMsg.text !== disconnectedText) {
+	  } else if (
+		window.currentReceiver &&
+		!users.find(u => u.id === window.currentReceiver)
+	  ) {
+		const lastMsg =
+		  window.conversations[window.currentReceiver]?.[
+			window.conversations[window.currentReceiver].length - 1
+		  ];
+		const disconnectedText =
+		  (window.savedUsers[window.currentReceiver]
+			? window.savedUsers[window.currentReceiver].username
+			: "Inconnu") + " s'est déconnecté(e).";
+		if (
+		  !lastMsg ||
+		  lastMsg.sender !== "system" ||
+		  lastMsg.text !== disconnectedText
+		) {
 		  addSystemMessage(window.currentReceiver, disconnectedText);
 		}
 		disableChatInput(true);
@@ -97,15 +125,40 @@ window.addEventListener("storage", e => {
 	  saveData();
 	});
 	socket.on("receiveMessage", data => {
-	  if (!window.conversations[data.from]) window.conversations[data.from] = [];
+	  if (!window.conversations[data.from])
+		window.conversations[data.from] = [];
 	  if (data.from !== window.currentReceiver)
-		window.unreadCounts[data.from] = (window.unreadCounts[data.from] || 0) + 1;
+		window.unreadCounts[data.from] =
+		  (window.unreadCounts[data.from] || 0) + 1;
 	  addMessageToConversation(data.from, data.message, "other");
 	  if (window.audioEnabled && document.visibilityState === "hidden") {
 		notificationSound.play().catch(() => {});
 	  }
 	  updateLists();
 	  saveData();
+	});
+	socket.on("typing", data => {
+	  if (window.currentReceiver === data.from) {
+		let typingDiv = document.getElementById("typingIndicator");
+		if (!typingDiv) {
+		  typingDiv = document.createElement("div");
+		  typingDiv.id = "typingIndicator";
+		  typingDiv.className = "typing-message";
+		  messagesDiv.appendChild(typingDiv);
+		  setTimeout(() => {
+			const el = document.getElementById("typingIndicator");
+			if (el) el.remove();
+		  }, 5000);
+		}
+		typingDiv.innerHTML =
+		  '<span>' + data.username + " est en train d'écrire...</span>";
+		messagesDiv.scrollTop = messagesDiv.scrollHeight;
+	  }
+	});
+	messageBox.addEventListener("input", () => {
+	  if (window.currentReceiver && window.typingOption) {
+		socket.emit("typing", { to: window.currentReceiver, username: window.username });
+	  }
 	});
 	audioToggle.addEventListener("click", () => {
 	  window.audioEnabled = !window.audioEnabled;
@@ -157,31 +210,59 @@ window.addEventListener("storage", e => {
 	}
 	function addSystemMessage(partnerId, msg) {
 	  if (!window.conversations[partnerId]) window.conversations[partnerId] = [];
-	  window.conversations[partnerId].push({ sender: "system", text: msg, time: new Date(), animated: false });
+	  window.conversations[partnerId].push({
+		sender: "system",
+		text: msg,
+		time: new Date(),
+		animated: false
+	  });
 	  if (window.currentReceiver === partnerId) renderConversation(partnerId);
 	}
 	function renderConversation(partnerId) {
 	  messagesDiv.innerHTML = "";
-	  const partnerName = window.usernameMap[partnerId] || (window.savedUsers[partnerId] ? window.savedUsers[partnerId].username : "Inconnu");
+	  const partnerName =
+		window.usernameMap[partnerId] ||
+		(window.savedUsers[partnerId] ? window.savedUsers[partnerId].username : "Inconnu");
 	  const infoDiv = document.createElement("div");
 	  infoDiv.className = "conversation-info";
-	  infoDiv.innerHTML = '<i class="fa fa-info-circle"></i><span>Vous discutez maintenant avec ' + partnerName + ".</span>";
+	  infoDiv.innerHTML =
+		'<i class="fa fa-info-circle"></i><span>Vous discutez maintenant avec ' +
+		partnerName +
+		".</span>";
 	  messagesDiv.appendChild(infoDiv);
+	  const partnerIntro = window.savedUsers[partnerId]
+		? window.savedUsers[partnerId].intro
+		: "";
+	  if (partnerIntro && partnerIntro.trim() !== "") {
+		const introDiv = document.createElement("div");
+		introDiv.className = "conversation-intro";
+		introDiv.textContent = '"' + partnerIntro + '"';
+		messagesDiv.appendChild(introDiv);
+	  }
 	  let prevSender = null;
 	  let block;
+	  let chainCount = 0;
 	  window.conversations[partnerId]?.forEach(msg => {
 		if (msg.sender === "system") {
 		  const sys = document.createElement("div");
 		  sys.className = "system-message";
-		  sys.innerHTML = '<i class="fa fa-tower-broadcast"></i><span>' + msg.text + "</span>";
+		  sys.innerHTML =
+			'<i class="fa fa-tower-broadcast"></i><span>' + msg.text + "</span>";
 		  messagesDiv.appendChild(sys);
 		  prevSender = "system";
+		  chainCount = 0;
+		  block = null;
 		  return;
 		}
-		const formattedTime = ("0" + new Date(msg.time).getHours()).slice(-2) + ":" + ("0" + new Date(msg.time).getMinutes()).slice(-2);
-		if (msg.sender !== prevSender || prevSender === "system") {
+		const formattedTime =
+		  ("0" + new Date(msg.time).getHours()).slice(-2) +
+		  ":" +
+		  ("0" + new Date(msg.time).getMinutes()).slice(-2);
+		if (msg.sender !== prevSender || chainCount >= 10) {
+		  chainCount = 1;
 		  block = document.createElement("div");
-		  block.className = "message-block " + (msg.sender === "me" ? "msg-me" : "msg-other");
+		  block.className =
+			"message-block " + (msg.sender === "me" ? "msg-me" : "msg-other");
 		  const header = document.createElement("div");
 		  header.className = "message-header";
 		  const avatarDiv = document.createElement("div");
@@ -189,7 +270,13 @@ window.addEventListener("storage", e => {
 		  if (msg.sender === "me") {
 			avatarDiv.innerHTML = generateAvatarSVG(window.avatar, 45);
 		  } else {
-			avatarDiv.innerHTML = generateAvatarSVG(window.avatarMap[partnerId] || (window.savedUsers[partnerId] ? window.savedUsers[partnerId].avatar : null), 45);
+			avatarDiv.innerHTML = generateAvatarSVG(
+			  window.avatarMap[partnerId] ||
+				(window.savedUsers[partnerId]
+				  ? window.savedUsers[partnerId].avatar
+				  : null),
+			  45
+			);
 		  }
 		  const meta = document.createElement("div");
 		  meta.className = "message-meta";
@@ -214,6 +301,7 @@ window.addEventListener("storage", e => {
 		  block.appendChild(bubble);
 		  messagesDiv.appendChild(block);
 		} else {
+		  chainCount++;
 		  const bubble = document.createElement("div");
 		  bubble.className = "message-bubble";
 		  bubble.textContent = msg.text;
@@ -230,7 +318,14 @@ window.addEventListener("storage", e => {
 	function updateLists() {
 	  pinnedUsersList.innerHTML = "";
 	  onlineUsersList.innerHTML = "";
-	  const pinnedIds = Object.keys(window.conversations).filter(id => id !== socket.id);
+	  const pinnedIds = Object.keys(window.conversations).filter(
+		id => id !== socket.id
+	  );
+	  pinnedIds.sort((a, b) => {
+		let aOnline = window.currentUsers.find(u => u.id === a) ? 1 : 0;
+		let bOnline = window.currentUsers.find(u => u.id === b) ? 1 : 0;
+		return bOnline - aOnline;
+	  });
 	  const pinnedCount = pinnedIds.length;
 	  if (pinnedCount > 0) {
 		document.querySelector(".pinned-header .title").textContent = "";
@@ -260,7 +355,9 @@ window.addEventListener("storage", e => {
 	function createListItem(id, container, isPinned) {
 	  const li = document.createElement("li");
 	  li.dataset.id = id;
-	  const name = window.usernameMap[id] || (window.savedUsers[id] ? window.savedUsers[id].username : "Inconnu");
+	  const name =
+		window.usernameMap[id] ||
+		(window.savedUsers[id] ? window.savedUsers[id].username : "Inconnu");
 	  let statusHTML = "";
 	  if (isPinned) {
 		if (window.currentUsers.find(u => u.id === id)) {
@@ -269,9 +366,17 @@ window.addEventListener("storage", e => {
 		  statusHTML = '<div class="user-status offline">Déconnecté(e)</div>';
 		}
 	  }
-	  const userAvatar = window.avatarMap[id] || (window.savedUsers[id] ? window.savedUsers[id].avatar : null);
+	  const userAvatar =
+		window.avatarMap[id] || (window.savedUsers[id] ? window.savedUsers[id].avatar : null);
 	  const userAvatarHTML = userAvatar ? generateAvatarSVG(userAvatar, 30) : "";
-	  li.innerHTML = '<div class="user-item"><div class="user-avatar"><div class="avatar-image">' + userAvatarHTML + '</div></div><div class="user-info-box"><div class="user-name">' + name + "</div>" + statusHTML + '</div><span class="notif" style="display:none;"></span></div>';
+	  li.innerHTML =
+		'<div class="user-item"><div class="user-avatar"><div class="avatar-image">' +
+		userAvatarHTML +
+		'</div></div><div class="user-info-box"><div class="user-name">' +
+		name +
+		"</div>" +
+		statusHTML +
+		'</div><span class="notif" style="display:none;"></span></div>';
 	  const itemDiv = li.querySelector(".user-item");
 	  if (id === window.currentReceiver) itemDiv.classList.add("selected");
 	  const notifSpan = itemDiv.querySelector(".notif");
@@ -342,7 +447,9 @@ window.addEventListener("storage", e => {
 	  container.appendChild(li);
 	}
 	function updateTitle() {
-	  let count = Object.keys(window.unreadCounts).filter(key => window.unreadCounts[key] > 0).length;
+	  let count = Object.keys(window.unreadCounts).filter(
+		key => window.unreadCounts[key] > 0
+	  ).length;
 	  if (count > 0) {
 		document.title = "(" + count + ") VivaChat";
 	  } else {
@@ -354,7 +461,7 @@ window.addEventListener("storage", e => {
 	  copyLinkBtn.textContent = "Lien copié";
 	  setTimeout(() => {
 		copyLinkBtn.textContent = "Copier le lien";
-	  }, 2000);
+	  }, 4000);
 	});
 	function randomUsername() {
 	  return "Stranger" + Math.floor(1000 + Math.random() * 9000);
@@ -369,7 +476,12 @@ window.addEventListener("storage", e => {
 	function loadData(key) {
 	  const d = localStorage.getItem(key);
 	  if (d) {
-		if (key === "conversations" || key === "unreadCounts" || key === "avatar" || key === "savedUsers") {
+		if (
+		  key === "conversations" ||
+		  key === "unreadCounts" ||
+		  key === "avatar" ||
+		  key === "savedUsers"
+		) {
 		  return JSON.parse(d);
 		}
 		return d;
@@ -379,15 +491,44 @@ window.addEventListener("storage", e => {
 	document.addEventListener("click", function unlockAudio() {
 	  const originalVolume = notificationSound.volume;
 	  notificationSound.volume = 0;
-	  notificationSound.play().then(() => {
-		notificationSound.pause();
-		notificationSound.currentTime = 0;
-		notificationSound.volume = originalVolume;
-		document.removeEventListener("click", unlockAudio);
-	  }).catch(() => {
-		notificationSound.volume = originalVolume;
-		document.removeEventListener("click", unlockAudio);
-	  });
+	  notificationSound
+		.play()
+		.then(() => {
+		  notificationSound.pause();
+		  notificationSound.currentTime = 0;
+		  notificationSound.volume = originalVolume;
+		  document.removeEventListener("click", unlockAudio);
+		})
+		.catch(() => {
+		  notificationSound.volume = originalVolume;
+		  document.removeEventListener("click", unlockAudio);
+		});
+	});
+	document.body.addEventListener("click", e => {
+	  if (
+		mainMenu.style.display === "block" &&
+		!mainMenu.contains(e.target) &&
+		!avatarMenu.contains(e.target) &&
+		e.target !== userInfo
+	  ) {
+		let newUsername = menuUsername.value.trim() || username;
+		if (newUsername.length > 16) {
+		  newUsername = newUsername.substring(0, 16);
+		}
+		username = newUsername;
+		let newIntro = menuIntro.value.trim().substring(0, 100);
+		localStorage.setItem("introPhrase", newIntro);
+		window.introPhrase = newIntro;
+		let newTypingOption = menuTypingOption.checked;
+		localStorage.setItem("typingOption", newTypingOption);
+		window.typingOption = newTypingOption;
+		socket.emit("setUsername", username);
+		socket.emit("setIntro", newIntro);
+		currentUsernameSpan.textContent = username;
+		canEdit = false;
+		saveData();
+		mainMenu.style.display = "none";
+	  }
 	});
   }
   

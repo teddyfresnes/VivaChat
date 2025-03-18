@@ -1,5 +1,7 @@
 const mainAvatarPreview = document.getElementById('mainAvatarPreview')
 const menuUsername = document.getElementById('menuUsername')
+const menuIntro = document.getElementById('menuIntro')
+const menuTypingOption = document.getElementById('menuTypingOption')
 const customizeAvatarBtn = document.getElementById('customizeAvatarBtn')
 const userInfo = document.querySelector('.sidebar-footer .user-info')
 avatarMenu = document.getElementById('avatarMenu')
@@ -85,30 +87,13 @@ userInfo.addEventListener('click', e => {
     mainMenu.style.display = 'none'
   } else {
     menuUsername.value = username
+    menuIntro.value = localStorage.getItem('introPhrase') || ""
+    menuTypingOption.checked = localStorage.getItem('typingOption') === "false" ? false : true
     mainAvatarPreview.innerHTML = generateAvatarSVG(avatar, 80)
     mainMenu.style.display = 'block'
   }
   e.stopPropagation()
 })
-document.body.addEventListener('click', e => {
-	if (
-	  mainMenu.style.display === 'block' &&
-	  !mainMenu.contains(e.target) &&
-	  !avatarMenu.contains(e.target) &&
-	  e.target !== userInfo
-	) {
-	  let newUsername = menuUsername.value.trim() || username;
-	  if (newUsername.length > 16) {
-		newUsername = newUsername.substring(0, 16);
-	  }
-	  username = newUsername;
-	  socket.emit('setUsername', username);
-	  currentUsernameSpan.textContent = username;
-	  canEdit = false;
-	  saveData();
-	  mainMenu.style.display = 'none';
-	}
-});  
 customizeAvatarBtn.addEventListener('click', e => {
   [...colorPalettes].forEach(palette => createPaletteSwatches(palette))
   avatarMenu.style.display = 'block'

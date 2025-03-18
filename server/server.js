@@ -43,11 +43,26 @@ io.on('connection', socket => {
 		io.emit('onlineUsers', Object.values(users))
 	})
 
+	socket.on('setIntro', intro => {
+		if (!users[socket.id]) users[socket.id] = { id: socket.id }
+		users[socket.id].intro = intro
+		io.emit('onlineUsers', Object.values(users))
+	})
+
 	socket.on('sendMessage', data => {
 		if (users[data.to]) {
 			io.to(data.to).emit('receiveMessage', {
 				from: socket.id,
 				message: data.message
+			})
+		}
+	})
+
+	socket.on('typing', data => {
+		if (users[data.to]) {
+			io.to(data.to).emit('typing', {
+				from: socket.id,
+				username: data.username
 			})
 		}
 	})
