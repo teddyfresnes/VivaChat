@@ -50,20 +50,20 @@ window.addEventListener("focus", () => {
   const pinnedUsersList = document.getElementById("pinnedUsers");
   const onlineUsersList = document.getElementById("onlineUsers");
   const messagesDiv = document.getElementById("messages");
-  const messageBox = document.getElementById("messageBox");
+  var messageBox = document.getElementById("messageBox");
   const sendBtn = document.getElementById("sendBtn");
   const audioToggle = document.getElementById("audioToggle");
-  const settingsIcon = document.getElementById("settingsIcon");
   window.currentUsernameSpan = document.getElementById("currentUsername");
   const footerAvatar = document.querySelector(".footer-avatar");
-  const mainMenu = document.getElementById("mainMenu");
+  window.mainMenu = document.getElementById("mainMenu");
   window.avatarMenu = document.getElementById("avatarMenu");
   const inviteContainer = document.getElementById("inviteContainer");
   const copyLinkBtn = document.getElementById("copyLinkBtn");
   const notificationSound = document.getElementById("notificationSound");
-  const emojiBtn = document.getElementById("emojiBtn");
-  const emojiPicker = document.getElementById("emojiPicker");
+  var emojiBtn = document.getElementById("emojiBtn");
   const gifBtn = document.getElementById("gifBtn");
+  const settingsMenu = document.getElementById('settingsMenu');
+  const emojiMenu = document.getElementById('emojiMenu');
 
   function showWaitingMessage() {
     messagesDiv.innerHTML = '<div style="text-align:center;color:#fff;margin-top:50px;">Vous avez été déconnecté, veuillez patienter quelques secondes...</div>';
@@ -564,24 +564,5 @@ window.addEventListener("focus", () => {
     }
   });
 
-  emojiBtn.addEventListener("click", () => {
-    emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
-    if (emojiPicker.style.display === "block") {
-      loadEmojis();
-    }
-  });
 
-  emojiPicker.addEventListener("click", e => {
-    if (e.target.classList.contains("emoji")) {
-      messageBox.value += e.target.textContent;
-      emojiPicker.style.display = "none";
-    }
-  });
-
-  function loadEmojis() {
-    if (emojiPicker.innerHTML.trim() === "") {
-      const emojis = ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😉", "😊", "😋", "😎", "😍", "😘", "😗", "😙", "😚", "🙂", "🤗", "🤔", "😐", "😑", "😶", "🙄", "😏", "😣", "😥", "😮", "🤐", "😯", "😪", "😫", "😴", "😌", "😛", "😜", "😝", "🤤", "😒", "😓", "😔", "😕", "🙃", "🤑", "😲", "☹️", "🙁", "😖", "😞", "😟", "😤", "😢", "😭", "😦", "😧", "😨", "😩", "🤯", "😬", "😰", "😱", "🥵", "🥶", "😳", "🤪", "😵", "😡", "😠", "🤬", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "😇", "🥳", "🥺", "🤠", "🤡", "🤥", "🤫", "🤭", "🧐", "🤓", "😈", "👿", "👹", "👺", "💀", "☠️", "👻", "👽", "👾", "🤖", "💩", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"];
-      emojiPicker.innerHTML = emojis.map(emoji => `<span class="emoji">${emoji}</span>`).join("");
-    }
-  }
 

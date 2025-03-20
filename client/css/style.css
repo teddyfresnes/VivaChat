@@ -339,7 +339,7 @@ html, body {
 	background-color: #2f3136;
 	color: #dcddde;
 	padding: 15px;
-	padding-right: 80px; /* Add padding to make space for the emoji and gif buttons */
+	padding-right: 80px;
 	border-radius: 4px;
 	font-size: 1rem;
   }
@@ -390,7 +390,7 @@ html, body {
 	bottom: 70px;
 	right: 20px;
 	width: 300px;
-	max-height: 200px;
+	height: 500px;
 	background: #2f3136;
 	border: 2px solid #444;
 	border-radius: 6px;

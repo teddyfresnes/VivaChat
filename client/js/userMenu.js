@@ -91,6 +91,8 @@ userInfo.addEventListener('click', e => {
     menuTypingOption.checked = localStorage.getItem('typingOption') === "false" ? false : true
     mainAvatarPreview.innerHTML = generateAvatarSVG(avatar, 80)
     mainMenu.style.display = 'block'
+    emojiMenu.style.display = 'none'
+    settingsMenu.style.display = 'none'
   }
   e.stopPropagation()
 })
