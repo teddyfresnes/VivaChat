@@ -7,6 +7,7 @@ settingsIcon.addEventListener('click', e => {
     settingsMenu.style.display = 'block';
     emojiMenu.style.display = 'none';
     mainMenu.style.display = 'none';
+    avatarMenu.style.display = 'none';
   }
   e.stopPropagation();
 });

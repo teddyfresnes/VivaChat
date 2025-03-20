@@ -34,7 +34,7 @@ window.addEventListener("focus", () => {
 });
 
 
-  window.socket = io("http://176.165.38.138:22453");
+  window.socket = io(SERVER_IP);
   window.username = loadData("username") || randomUsername();
   window.avatar = loadData("avatar") || randomAvatar();
   window.introPhrase = localStorage.getItem("introPhrase") || "";

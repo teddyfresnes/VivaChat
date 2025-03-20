@@ -5,6 +5,7 @@ emojiBtn.addEventListener('click', () => {
     emojiMenu.style.display = 'block';
     settingsMenu.style.display = 'none';
     mainMenu.style.display = 'none';
+    avatarMenu.style.display = 'none';
     loadEmojis();
   } else {
     emojiMenu.style.display = 'none';
