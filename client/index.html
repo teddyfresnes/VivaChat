@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-  <link rel="icon" type="image/x-icon" href="assets/images/favicon2.png">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.png">
   <title>VivaChat/</title>
   <audio id="notificationSound" src="assets/sounds/notification.mp3" preload="auto"></audio>
 </head>
@@ -44,7 +44,11 @@
         <div class="messages" id="messages"></div>
         <div class="input-zone">
           <input type="text" id="messageBox"/>
+          <button id="emojiBtn"><i class="fa fa-smile"></i></button>
+          <button id="gifBtn"><i class="fa fa-gift"></i></button>
           <button id="sendBtn" disabled><i class="fa fa-paper-plane"></i></button>
+        </div>
+        <div id="emojiPicker" class="emoji-picker" style="display:none;">
         </div>
       </div>
     </div>

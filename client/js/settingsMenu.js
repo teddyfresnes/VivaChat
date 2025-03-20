@@ -1,4 +1,3 @@
-const settingsIcon = document.getElementById('settingsIcon')
 
 const settingsMenu = document.getElementById('settingsMenu')
 settingsIcon.addEventListener('click', e => {

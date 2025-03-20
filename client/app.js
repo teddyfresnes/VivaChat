@@ -1,10 +1,39 @@
-window.addEventListener("storage", e => { if (e.key === "primaryTab" && !e.newValue) { location.reload(); } });
-let isPrimary = false;
-if (!localStorage.getItem("primaryTab")) { localStorage.setItem("primaryTab", Date.now()); isPrimary = true; }
-window.addEventListener("beforeunload", () => { if (isPrimary) localStorage.removeItem("primaryTab"); });
-if (!isPrimary) {
-  document.body.innerHTML = '<div style="text-align:center;color:#fff;margin-top:50px;">Un autre onglet est déjà connecté. Fermez cet onglet.</div>';
-} else {
+const tabId = Date.now() + "_" + Math.random();
+
+localStorage.setItem("primaryTab", tabId);
+let isPrimary = true;
+
+window.addEventListener("storage", (e) => {
+  if (e.key === "primaryTab") {
+    if (e.newValue !== tabId) {
+      isPrimary = false;
+      if (window.socket && window.socket.connected) {
+        window.socket.disconnect();
+      }
+      document.body.innerHTML = '<div style="text-align:center;color:#fff;margin-top:50px;">Cet onglet est désactivé car un autre onglet est désormais actif. Veuillez utiliser le nouvel onglet.</div>';
+    } else {
+      if (!isPrimary) {
+        location.reload();
+      }
+      isPrimary = true;
+    }
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  if (isPrimary) {
+    localStorage.removeItem("primaryTab");
+  }
+});
+
+window.addEventListener("focus", () => {
+  if (!isPrimary) {
+    localStorage.setItem("primaryTab", tabId);
+    location.reload();
+  }
+});
+
+
   window.socket = io("http://176.165.38.138:22453");
   window.username = loadData("username") || randomUsername();
   window.avatar = loadData("avatar") || randomAvatar();
@@ -32,6 +61,10 @@ if (!isPrimary) {
   const inviteContainer = document.getElementById("inviteContainer");
   const copyLinkBtn = document.getElementById("copyLinkBtn");
   const notificationSound = document.getElementById("notificationSound");
+  const emojiBtn = document.getElementById("emojiBtn");
+  const emojiPicker = document.getElementById("emojiPicker");
+  const gifBtn = document.getElementById("gifBtn");
+
   function showWaitingMessage() {
     messagesDiv.innerHTML = '<div style="text-align:center;color:#fff;margin-top:50px;">Vous avez été déconnecté, veuillez patienter quelques secondes...</div>';
     disableChatInput(true);
@@ -157,22 +190,27 @@ if (!isPrimary) {
     saveData();
   });
   socket.on("typing", data => {
-    if (window.currentReceiver === data.from) {
-      let typingDiv = document.getElementById("typingIndicator");
-      if (!typingDiv) {
-        typingDiv = document.createElement("div");
-        typingDiv.id = "typingIndicator";
-        typingDiv.className = "typing-message";
-        messagesDiv.appendChild(typingDiv);
-        setTimeout(() => {
-          const el = document.getElementById("typingIndicator");
-          if (el) el.remove();
-        }, 5000);
-      }
-      typingDiv.innerHTML = '<span>' + data.username + " est en train d'écrire...</span>";
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    if (window.currentReceiver !== data.from) return;
+    const typingIndicatorId = "typingIndicator-" + data.from;
+    let typingDiv = document.getElementById(typingIndicatorId);
+    if (!typingDiv) {
+      typingDiv = document.createElement("div");
+      typingDiv.id = typingIndicatorId;
+      typingDiv.className = "typing-message";
+      messagesDiv.appendChild(typingDiv);
+      typingDiv.checkInterval = setInterval(() => {
+        if (Date.now() - typingDiv.lastTypingTime >= 5000) {
+          clearInterval(typingDiv.checkInterval);
+          typingDiv.remove();
+        }
+      }, 100);
     }
+    typingDiv.innerHTML = '<span>' + data.username + " est en train d'écrire...</span>";
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    typingDiv.lastTypingTime = Date.now();
   });
+  
+  
   messageBox.addEventListener("input", () => {
     if (window.currentReceiver && window.typingOption) {
       socket.emit("typing", { to: window.currentReceiver, username: window.username });
@@ -184,16 +222,17 @@ if (!isPrimary) {
   });
   function disableChatInput(disabled) {
     messageBox.disabled = disabled;
-	
     sendBtn.disabled = disabled;
+    emojiBtn.style.display = disabled ? "none" : "flex";
+    gifBtn.style.display = disabled ? "none" : "flex";
     if (disabled) {
       messageBox.placeholder = "";
       sendBtn.classList.add("disabled");
-	  messageBox.style.color = "#2f3136";
+      messageBox.style.color = "#2f3136";
     } else {
       sendBtn.classList.remove("disabled");
       messageBox.placeholder = "Tape ton message";
-	  messageBox.style.color = "#dcddde";
+      messageBox.style.color = "#dcddde";
     }
   }
   function setCurrentReceiver(userId) {
@@ -450,6 +489,13 @@ if (!isPrimary) {
     }
     let count = Object.keys(window.unreadCounts).filter(key => window.unreadCounts[key] > 0).length;
     document.title = count > 0 ? "(" + count + ") VivaChat" : "VivaChat";
+    
+    const favicon = document.querySelector("link[rel='icon']");
+    if (count > 0) {
+      favicon.href = "assets/images/favicon2.png";
+    } else {
+      favicon.href = "assets/images/favicon.png";
+    }
   }
   copyLinkBtn.addEventListener("click", () => {
     const tempInput = document.createElement("input");
@@ -517,4 +563,25 @@ if (!isPrimary) {
       mainMenu.style.display = "none";
     }
   });
-}
+
+  emojiBtn.addEventListener("click", () => {
+    emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
+    if (emojiPicker.style.display === "block") {
+      loadEmojis();
+    }
+  });
+
+  emojiPicker.addEventListener("click", e => {
+    if (e.target.classList.contains("emoji")) {
+      messageBox.value += e.target.textContent;
+      emojiPicker.style.display = "none";
+    }
+  });
+
+  function loadEmojis() {
+    if (emojiPicker.innerHTML.trim() === "") {
+      const emojis = ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😉", "😊", "😋", "😎", "😍", "😘", "😗", "😙", "😚", "🙂", "🤗", "🤔", "😐", "😑", "😶", "🙄", "😏", "😣", "😥", "😮", "🤐", "😯", "😪", "😫", "😴", "😌", "😛", "😜", "😝", "🤤", "😒", "😓", "😔", "😕", "🙃", "🤑", "😲", "☹️", "🙁", "😖", "😞", "😟", "😤", "😢", "😭", "😦", "😧", "😨", "😩", "🤯", "😬", "😰", "😱", "🥵", "🥶", "😳", "🤪", "😵", "😡", "😠", "🤬", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "😇", "🥳", "🥺", "🤠", "🤡", "🤥", "🤫", "🤭", "🧐", "🤓", "😈", "👿", "👹", "👺", "💀", "☠️", "👻", "👽", "👾", "🤖", "💩", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"];
+      emojiPicker.innerHTML = emojis.map(emoji => `<span class="emoji">${emoji}</span>`).join("");
+    }
+  }
+
